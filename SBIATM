@@ -1,0 +1,93 @@
+import java.util.Scanner;
+
+public class SBIATM {
+
+    private static final String USER_PIN = "1234"; // Default PIN
+    private static double balance = 10000.00;      // Initial balance
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("====== Welcome to SBI ATM ======");
+
+        // Step 1: PIN Authentication
+        if (!authenticatePIN(sc)) {
+            System.out.println("Too many incorrect attempts. Card blocked!");
+            return;
+        }
+
+        // Step 2: Show ATM Menu
+        int choice;
+        do {
+            showMenu();
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1 -> checkBalance();
+                case 2 -> deposit(sc);
+                case 3 -> withdraw(sc);
+                case 4 -> System.out.println("Thank you for using SBI ATM. Please take your card.");
+                default -> System.out.println("Invalid choice! Try again.");
+            }
+
+        } while (choice != 4);
+
+        sc.close();
+    }
+
+    // Function to authenticate PIN
+    private static boolean authenticatePIN(Scanner sc) {
+        int attempts = 3;
+        while (attempts > 0) {
+            System.out.print("Enter your 4-digit PIN: ");
+            String enteredPin = sc.next();
+            if (enteredPin.equals(USER_PIN)) {
+                return true;
+            } else {
+                attempts--;
+                System.out.println("Incorrect PIN. Attempts left: " + attempts);
+            }
+        }
+        return false;
+    }
+
+    // ATM Menu
+    private static void showMenu() {
+        System.out.println("\n====== SBI ATM Menu ======");
+        System.out.println("1. Check Balance");
+        System.out.println("2. Deposit");
+        System.out.println("3. Withdraw");
+        System.out.println("4. Exit");
+    }
+
+    // Check balance
+    private static void checkBalance() {
+        System.out.printf("Your current balance is: ₹%.2f\n", balance);
+    }
+
+    // Deposit amount
+    private static void deposit(Scanner sc) {
+        System.out.print("Enter amount to deposit: ₹");
+        double amount = sc.nextDouble();
+        if (amount <= 0) {
+            System.out.println("Invalid amount. Deposit failed.");
+            return;
+        }
+        balance += amount;
+        System.out.printf("₹%.2f deposited successfully.\n", amount);
+    }
+
+    // Withdraw amount
+    private static void withdraw(Scanner sc) {
+        System.out.print("Enter amount to withdraw: ₹");
+        double amount = sc.nextDouble();
+        if (amount <= 0) {
+            System.out.println("Invalid amount. Withdrawal failed.");
+        } else if (amount > balance) {
+            System.out.println("Insufficient balance.");
+        } else {
+            balance -= amount;
+            System.out.printf("₹%.2f withdrawn successfully.\n", amount);
+        }
+    }
+}
